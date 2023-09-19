@@ -2,15 +2,17 @@
 
 package com.management.sales.Sales.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "invoices")
 public class Invoice {
-    private String id;
-    private String customer_id;
-    private String product_id;
+    @Id
+    @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
+    private int id;
+    private Customer customer;
+    private Product product;
     private String quantity;
     private String price;
     private String total_price;
@@ -19,27 +21,27 @@ public class Invoice {
     public Invoice() {
     }
 
-    public Invoice(String id, String customer_id, String product_id, String quantity, String price, String total_price,
+    public Invoice(Customer customer, Product product, String quantity, String price, String total_price,
             String date) {
-        this.id = id;
-        this.customer_id = customer_id;
-        this.product_id = product_id;
+
+        this.customer = customer;
+        this.product = product;
         this.quantity = quantity;
         this.price = price;
         this.total_price = total_price;
         this.date = date;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public String getCustomer_id() {
-        return customer_id;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public String getProduct_id() {
-        return product_id;
+    public Product getProduct() {
+        return product;
     }
 
     public String getQuantity() {
@@ -58,16 +60,14 @@ public class Invoice {
         return date;
     }
 
-    public void setId(String id) {
-        this.id = id;
+
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
-    public void setCustomer_id(String customer_id) {
-        this.customer_id = customer_id;
-    }
-
-    public void setProduct_id(String product_id) {
-        this.product_id = product_id;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public void setQuantity(String quantity) {
@@ -88,8 +88,8 @@ public class Invoice {
 
     @Override
     public String toString() {
-        return "Invoice [customer_id=" + customer_id + ", date=" + date + ", id=" + id + ", price=" + price
-                + ", product_id=" + product_id + ", quantity=" + quantity + ", total_price=" + total_price + "]";
+        return "Invoice [id=" + id + ", date=" + date + ", id=" + id + ", price=" + price
+                + ", quantity=" + quantity + ", total_price=" + total_price + "]";
     }
 
 

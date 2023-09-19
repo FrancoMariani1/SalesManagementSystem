@@ -1,12 +1,14 @@
 package com.management.sales.Sales.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "customer_orders")
 
 public class CustomerOrder {
+    @Id
+    @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
     private int id;
     private Customer customer;
     private Product product;
@@ -15,20 +17,10 @@ public class CustomerOrder {
     private double total;
     private String fecha;
 
-    public CustomerOrder() {
-            }
-    public CustomerOrder(int id, Customer customer, Product product, int cantidad, double precio, double total,
-            String fecha) {
-        this.id = id;
-        this.customer = customer;
-        this.product = product;
-        this.cantidad = cantidad;
-        this.precio = precio;
-        this.total = total;
-        this.fecha = fecha;
-    }
+
     public CustomerOrder(Customer customer, Product product, int cantidad, double precio, double total,
             String fecha) {
+
         this.customer = customer;
         this.product = product;
         this.cantidad = cantidad;
@@ -36,6 +28,7 @@ public class CustomerOrder {
         this.total = total;
         this.fecha = fecha;
     }
+
     public int getId() {
         return id;
     }
@@ -81,7 +74,7 @@ public class CustomerOrder {
 
     @Override
     public String toString() {
-        return "CustomerOrder [cantidad=" + cantidad + ", customer=" + customer + ", fecha=" + fecha + ", id=" + id
+        return "CustomerOrder [id=" + id + "cantidad=" + cantidad + ", customer=" + customer + ", fecha=" + fecha + ", id=" + id
                 + ", precio=" + precio + ", product=" + product + ", total=" + total + "]";
     }
 

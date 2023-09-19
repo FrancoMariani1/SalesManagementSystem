@@ -4,23 +4,28 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class AppUser{
 
     @Id
-    @GeneratedValue
-    @Column(name = "id")
+    @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
+    private int id;
     private String name;
     private String email;
     private String password;
     private String role;
 
-    public User() {
+    public AppUser() {
     }
-    public User(String name, String email, String password, String role) {
+    public AppUser( String name, String email, String password, String role) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -51,7 +56,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User [name=" + name + ", email=" + email + ", password=" + password + ", role=" + role + "]";
+        return "User [id=" + id + "name=" + name + ", email=" + email + ", password=" + password + ", role=" + role + "]";
     }
 
 }

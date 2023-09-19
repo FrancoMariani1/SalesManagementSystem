@@ -1,12 +1,14 @@
 package com.management.sales.Sales.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "customers")
 public class Customer {
-
+    @Id
+    @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
+        private int id;
         private String name;
         private String email;
         private String phone;
@@ -16,12 +18,18 @@ public class Customer {
         public Customer() {
         }
         public Customer(String name, String email, String phone, String address, String city, String state) {
+
             this.name = name;
             this.email = email;
             this.phone = phone;
             this.address = address;
+
         }
 
+
+        public int getId() {
+            return id;
+        }
         public String getName() {
             return name;
         }
@@ -34,6 +42,7 @@ public class Customer {
         public String getAddress() {
             return address;
         }
+
 
         public void setName(String name) {
             this.name = name;
@@ -51,7 +60,7 @@ public class Customer {
 
         @Override
         public String toString() {
-            return "Customer [name=" + name + ", email=" + email + ", phone=" + phone + ", address=" + address + "]";
+            return "Customer [id=" + id + ", name=" + name + ", email=" + email + ", phone=" + phone + ", address=" + address + "]";
         }
 
 

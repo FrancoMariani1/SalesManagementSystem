@@ -11,19 +11,19 @@ public class Product {
     private String description;
     private String category;
     private String brand;
-    private String price;
-    private String stock;
+    private double price;
+    private Stock amount;
 
     public Product() {
     }
 
-    public Product(String name, String description, String category, String brand, String price, String stock) {
+    public Product(String name, String description, String category, String brand, double price, Stock amount) {
         this.name = name;
         this.description = description;
         this.category = category;
         this.brand = brand;
         this.price = price;
-        this.stock = stock;
+        this.amount = amount;
     }
 
     public String getName() {
@@ -38,11 +38,12 @@ public class Product {
     public String getBrand() {
         return brand;
     }
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
-    public String getStock() {
-        return stock;
+
+    public Stock getAmount() {
+        return amount;
     }
 
     public void setName(String name) {
@@ -57,15 +58,16 @@ public class Product {
     public void setBrand(String brand) {
         this.brand = brand;
     }
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
-    public void setStock(String stock) {
-        this.stock = stock;
+
+    public void setAmount(Stock amount) {
+        this.amount = amount;
     }
 
     @Override
     public String toString() {
-        return "Product [name=" + name + ", description=" + description + ", category=" + category + ", brand=" + brand + ", price=" + price + ", stock=" + stock + "]";
+        return "Product [name=" + name + ", description=" + description + ", category=" + category + ", brand=" + brand + ", price=" + price + ", stock=" + amount + "]";
     }
 }
