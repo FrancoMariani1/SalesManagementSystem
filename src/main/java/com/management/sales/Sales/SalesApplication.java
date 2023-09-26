@@ -1,3 +1,5 @@
+//I want to create a sales management system. As entities, I will have users, customers, products, suppliers, purchases, sales, invoices, orders, and inventory.
+
 package com.management.sales.Sales;
 
 import org.springframework.boot.SpringApplication;
