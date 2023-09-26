@@ -11,7 +11,13 @@ public class Invoice {
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
     private int id;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private Customer customer;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
     private String quantity;
     private String price;

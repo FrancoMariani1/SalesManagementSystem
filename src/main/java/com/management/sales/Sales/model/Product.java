@@ -1,37 +1,38 @@
 package com.management.sales.Sales.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "products")
 
 public class Product {
+    @Id
+    @SequenceGenerator(name = "product_sequence", sequenceName = "product_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_sequence")
+    private int id;
+
     private String name;
-    private String description;
+
     private String category;
     private String brand;
     private double price;
-    private Stock amount;
 
     public Product() {
     }
 
-    public Product(String name, String description, String category, String brand, double price, Stock amount) {
+    public Product(String name, String category, String brand, double price) {
         this.name = name;
-        this.description = description;
+
         this.category = category;
         this.brand = brand;
         this.price = price;
-        this.amount = amount;
+
     }
 
     public String getName() {
         return name;
     }
-    public String getDescription() {
-        return description;
-    }
+
     public String getCategory() {
         return category;
     }
@@ -42,16 +43,12 @@ public class Product {
         return price;
     }
 
-    public Stock getAmount() {
-        return amount;
-    }
+
 
     public void setName(String name) {
         this.name = name;
     }
-    public void setDescription(String description) {
-        this.description= description;
-    }
+
     public void setCategory(String category) {
         this.category = category;
     }
@@ -62,12 +59,10 @@ public class Product {
         this.price = price;
     }
 
-    public void setAmount(Stock amount) {
-        this.amount = amount;
-    }
+
 
     @Override
     public String toString() {
-        return "Product [name=" + name + ", description=" + description + ", category=" + category + ", brand=" + brand + ", price=" + price + ", stock=" + amount + "]";
+        return "Product [name=" + name + ", category=" + category + ", brand=" + brand + ", price=" + price + "]";
     }
 }
