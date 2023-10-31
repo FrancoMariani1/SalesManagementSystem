@@ -2,6 +2,8 @@ package com.management.sales.Sales.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "products")
 
@@ -9,7 +11,7 @@ public class Product {
     @Id
     @SequenceGenerator(name = "product_sequence", sequenceName = "product_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_sequence")
-    private int id;
+    private Long id;
 
     private String name;
 
@@ -20,6 +22,7 @@ public class Product {
     public Product() {
     }
 
+
     public Product(String name, String category, String brand, double price) {
         this.name = name;
 
@@ -29,6 +32,10 @@ public class Product {
 
     }
 
+    @ManyToMany(mappedBy = "products")
+    private List<Invoice> invoices;
+
+    public Long getId() { return id; }
     public String getName() {
         return name;
     }

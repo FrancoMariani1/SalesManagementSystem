@@ -7,9 +7,9 @@ import jakarta.persistence.*;
 public class AppUser{
 
     @Id
-    @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
-    private int id;
+    @SequenceGenerator(name = "appUser_sequence", sequenceName = "appUser_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appUser_sequence")
+    private Long id;
     private String name;
     private String email;
     private String password;
@@ -24,7 +24,7 @@ public class AppUser{
         this.role = role;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -44,7 +44,7 @@ public class AppUser{
     public void setName(String name) {
         this.name = name;
     }
-    public void setMail(String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
     public void setPassword(String password) {

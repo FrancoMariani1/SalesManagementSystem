@@ -6,9 +6,9 @@ import jakarta.persistence.*;
 @Table(name = "customers")
 public class Customer {
     @Id
-    @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
-        private int id;
+    @SequenceGenerator(name = "customer_sequence", sequenceName = "customer_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_sequence")
+        private Long id;
         private String name;
         private String email;
         private String phone;
@@ -27,7 +27,7 @@ public class Customer {
         }
 
 
-        public int getId() {
+        public Long getId() {
             return id;
         }
         public String getName() {
@@ -47,7 +47,7 @@ public class Customer {
         public void setName(String name) {
             this.name = name;
         }
-        public void setMail(String email) {
+        public void setEmail(String email) {
             this.email = email;
         }
         public void setPhone(String phone) {

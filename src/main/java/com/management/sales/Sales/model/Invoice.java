@@ -4,13 +4,16 @@ package com.management.sales.Sales.model;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+import java.util.List;
+
 @Entity
 @Table(name = "invoices")
 public class Invoice {
     @Id
-    @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
-    private int id;
+    @SequenceGenerator(name = "invoice_sequence", sequenceName = "invoice_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "invoice_sequence")
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
@@ -19,16 +22,17 @@ public class Invoice {
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
-    private String quantity;
-    private String price;
-    private String total_price;
-    private String date;
+    private int quantity;
+    private double price;
+    private double total_price;
+    private Date date;
 
     public Invoice() {
     }
 
-    public Invoice(Customer customer, Product product, String quantity, String price, String total_price,
-            String date) {
+
+    public Invoice(Customer customer, Product product, int quantity, double price, double total_price,
+            Date date) {
 
         this.customer = customer;
         this.product = product;
@@ -38,7 +42,16 @@ public class Invoice {
         this.date = date;
     }
 
-    public int getId() {
+    @ManyToMany
+    @JoinTable(
+            name = "invoice_product",
+            joinColumns = @JoinColumn(name = "invoice_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+
+    private List<Product> products;
+
+    public Long getId() {
         return id;
     }
 
@@ -50,23 +63,33 @@ public class Invoice {
         return product;
     }
 
-    public String getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public String getTotal_price() {
+    public double getTotal_price() {
         return total_price;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
+    public List<Product> getProducts() {
+        return products;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
@@ -76,19 +99,19 @@ public class Invoice {
         this.product = product;
     }
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
-    public void setTotal_price(String total_price) {
+    public void setTotal_price(double total_price) {
         this.total_price = total_price;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
