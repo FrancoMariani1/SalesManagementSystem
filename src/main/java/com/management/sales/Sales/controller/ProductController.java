@@ -36,8 +36,21 @@ public class ProductController {
         return productRepository.save(product);
     }
 
+    @PutMapping("/{id}")
+    public Product updateProduct(@PathVariable Integer id, @RequestBody Product updatedProduct) {
+        return productRepository.findById(id)
+                .map(product -> {
+                    product.setName(updatedProduct.getName());
+                    product.setBrand(updatedProduct.getBrand());
+                    product.setCategory(updatedProduct.getCategory());
+                    product.setPrice(updatedProduct.getPrice());
+                    return productRepository.save(product);
+                })
+                .orElseThrow(() -> new IllegalArgumentException("Product not found with id " + id));
+    }
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Integer id) {
         productRepository.deleteById(id);
     }
+
 }
