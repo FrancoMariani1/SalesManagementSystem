@@ -32,6 +32,16 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    public Product updateProduct(Integer id, Product updatedProduct) {
+        return productRepository.findById(id)
+                .map(product -> {
+                    product.setName(updatedProduct.getName());
+                    product.setPrice(updatedProduct.getPrice());
+                    return productRepository.save(product);
+                })
+                .orElseThrow(() -> new IllegalArgumentException("Product not found with id " + id));
+    }
+
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }

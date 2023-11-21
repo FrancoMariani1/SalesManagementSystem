@@ -44,6 +44,7 @@ public class CustomerController {
 
 }
 */
+/*
 package com.management.sales.Sales.controller;
 
 import com.management.sales.Sales.model.Customer;
@@ -99,4 +100,51 @@ public class CustomerController {
         customerRepository.deleteById(id);
     }
 
+}*/
+
+package com.management.sales.Sales.controller;
+
+import com.management.sales.Sales.model.Customer;
+import com.management.sales.Sales.service.CustomerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/customers")
+public class CustomerController {
+
+    private final CustomerService customerService;
+
+    @Autowired
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
+
+    @GetMapping
+    public List<Customer> getAllCustomers() {
+        return customerService.getAllCustomers();
+    }
+
+    @GetMapping("/{id}")
+    public Customer getCustomerById(@PathVariable Long id) {
+        return customerService.getCustomerById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found with id " + id));
+    }
+
+    @PostMapping
+    public Customer addCustomer(@RequestBody Customer customer) {
+        return customerService.addCustomer(customer);
+    }
+
+    @PutMapping("/{id}")
+    public Customer updateCustomer(@PathVariable Long id, @RequestBody Customer updatedCustomer) {
+        return customerService.updateCustomer(id, updatedCustomer);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteCustomer(@PathVariable Long id) {
+        customerService.deleteCustomer(id);
+    }
 }
