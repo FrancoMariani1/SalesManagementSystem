@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@CrossOrigin(origins = "localhost:3000")
 public class AppUserController {
 
     private final AppUserService appUserService;
@@ -36,6 +37,11 @@ public class AppUserController {
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Integer id) {
         appUserService.deleteUser(id);
+    }
+
+    @PutMapping("/{id}")
+    public AppUser updateUser(@PathVariable Integer id, @RequestBody AppUser appUser) {
+        return appUserService.updateUser(id, appUser);
     }
 
 

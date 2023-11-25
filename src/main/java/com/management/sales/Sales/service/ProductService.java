@@ -36,5 +36,12 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
+    public Product updateProduct(Long id, Product product) {
+        Product existingProduct = productRepository.findById(Math.toIntExact(id)).orElse(null);
+        existingProduct.setName(product.getName());
+        existingProduct.setPrice(product.getPrice());
+        return productRepository.save(existingProduct);
+    }
+
 
 }
