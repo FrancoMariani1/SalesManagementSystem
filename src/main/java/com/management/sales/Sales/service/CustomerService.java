@@ -35,6 +35,15 @@ public class CustomerService {
         customerRepository.deleteById(id);
     }
 
+    public Customer updateCustomer(Long id, Customer customer) {
+        Customer existingCustomer = customerRepository.findById(id).orElse(null);
+        existingCustomer.setName(customer.getName());
+        existingCustomer.setAddress(customer.getAddress());
+        existingCustomer.setPhone(customer.getPhone());
+        existingCustomer.setEmail(customer.getEmail());
+        return customerRepository.save(existingCustomer);
+    }
+
 }
 
 

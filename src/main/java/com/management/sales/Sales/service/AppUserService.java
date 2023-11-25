@@ -33,4 +33,13 @@ public class AppUserService {
         appUserRepository.deleteById(id);
     }
 
+    public AppUser updateUser(Integer id, AppUser appUser) {
+        AppUser existingUser = appUserRepository.findById(id).orElse(null);
+        existingUser.setName(appUser.getName());
+        existingUser.setEmail(appUser.getEmail());
+        existingUser.setPassword(appUser.getPassword());
+        existingUser.setRole(appUser.getRole());
+        return appUserRepository.save(existingUser);
+    }
+
 }
