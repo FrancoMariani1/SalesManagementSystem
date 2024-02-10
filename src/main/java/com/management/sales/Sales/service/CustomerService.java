@@ -3,6 +3,7 @@ package com.management.sales.Sales.service;
 
 import com.management.sales.Sales.model.Customer;
 import com.management.sales.Sales.repository.impl.CustomerRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,8 @@ public class CustomerService {
     public Customer addCustomer(Customer customer) {
         return customerRepository.save(customer);
     }
+
+    @Transactional
 
     public void deleteCustomer(Long id) {
         customerRepository.deleteById(id);

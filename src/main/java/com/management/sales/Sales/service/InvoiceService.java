@@ -4,6 +4,7 @@ package com.management.sales.Sales.service;
 
 import com.management.sales.Sales.model.Invoice;
 import com.management.sales.Sales.repository.impl.InvoiceRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -50,6 +51,8 @@ public class InvoiceService {
 
             return invoiceRepository.save(updatedInvoice);
         }
+
+        @Transactional
 
         public void deleteInvoice(Long id) {
             invoiceRepository.deleteById(id);

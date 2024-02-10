@@ -4,6 +4,7 @@ package com.management.sales.Sales.service;
 
 import com.management.sales.Sales.model.Product;
 import com.management.sales.Sales.repository.impl.ProductRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -31,6 +32,8 @@ public class ProductService {
     public Product addProduct(Product product) {
         return productRepository.save(product);
     }
+
+    @Transactional
 
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
