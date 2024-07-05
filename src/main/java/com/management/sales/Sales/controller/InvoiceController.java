@@ -1,6 +1,8 @@
 package com.management.sales.Sales.controller;
 
+import com.management.sales.Sales.dto.InvoiceDto;
 import com.management.sales.Sales.model.Invoice;
+import com.management.sales.Sales.model.InvoiceProduct;
 import com.management.sales.Sales.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/invoices")
@@ -46,10 +49,30 @@ public class InvoiceController {
     }
 
     @PostMapping
-    public ResponseEntity<Invoice> addInvoice(@RequestBody Invoice invoice) {
-        Invoice createdInvoice = invoiceService.addInvoice(invoice);
+    public ResponseEntity<Invoice> addInvoice(@RequestBody InvoiceDto invoiceDto) {
+        Invoice invoice = new Invoice();
+        invoice.setCustomer(invoiceDto.getCustomer());
+        invoice.setDate(invoiceDto.getDate());
+        invoice.setTotalPrice(invoiceDto.getTotal_price());
+
+        List<InvoiceProduct> invoiceProducts = invoiceDto.getInvoiceProducts().stream()
+                .map(dto -> {
+                    InvoiceProduct invoiceProduct = new InvoiceProduct();
+                    invoiceProduct.setProduct(dto.getProduct());
+                    invoiceProduct.setQuantity(dto.getQuantity());
+                    invoiceProduct.setPrice(dto.getPrice());
+                    return invoiceProduct;
+                }).collect(Collectors.toList());
+
+        Invoice createdInvoice = invoiceService.addInvoice(invoice, invoiceProducts);
         return new ResponseEntity<>(createdInvoice, HttpStatus.CREATED);
     }
+
+//    @PostMapping
+//    public ResponseEntity<Invoice> addInvoice(@RequestBody Invoice invoice) {
+//        Invoice createdInvoice = invoiceService.addInvoice(invoice);
+//        return new ResponseEntity<>(createdInvoice, HttpStatus.CREATED);
+//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Invoice> updateInvoice(@RequestBody Invoice invoice, @PathVariable Long id) {

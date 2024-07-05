@@ -1,26 +1,26 @@
 package com.management.sales.Sales.dto;
 
 public class LoginRequest {
-private String username;
+private String email;
     private String password;
 
     public LoginRequest() {
     }
 
-    public LoginRequest(String username, String password) {
-        this.setUsername(username);
+    public LoginRequest(String email, String password) {
+        this.setEmail(email);
         this.setPassword(password);
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        if (username == null || username.isEmpty()) {
-            throw new IllegalArgumentException("El nombre de usuario no puede ser nulo o vacío");
+    public void setEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("El email no puede ser nulo o vacío");
         }
-        this.username = username;
+        this.email = email;
     }
 
     public String getPassword() {

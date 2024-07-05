@@ -1,10 +1,16 @@
 package com.management.sales.Sales.model;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Collections;
 
 @Entity
 @Table(name = "users")
-public class AppUser{
+public class AppUser implements UserDetails {
 
     @Id
     @SequenceGenerator(name = "appUser_sequence", sequenceName = "appUser_sequence", allocationSize = 1)
@@ -57,6 +63,36 @@ public class AppUser{
     @Override
     public String toString() {
         return "User [id=" + id + "name=" + name + ", email=" + email + ", password=" + password + ", role=" + role + "]";
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(role));
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // Cambia esto si deseas implementar lógica de expiración de cuenta
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // Cambia esto si deseas implementar lógica de bloqueo de cuenta
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // Cambia esto si deseas implementar lógica de expiración de credenciales
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // Cambia esto si deseas implementar lógica de habilitación de cuenta
     }
 
 }
