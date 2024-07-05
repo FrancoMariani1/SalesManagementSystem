@@ -3,7 +3,11 @@
 package com.management.sales.Sales.service;
 
 import com.management.sales.Sales.model.Invoice;
+import com.management.sales.Sales.model.InvoiceProduct;
+import com.management.sales.Sales.model.Product;
+import com.management.sales.Sales.repository.impl.InvoiceProductRepository;
 import com.management.sales.Sales.repository.impl.InvoiceRepository;
+import com.management.sales.Sales.repository.impl.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,7 +20,15 @@ import java.util.Optional;
 @Service
 public class InvoiceService {
 
+        @Autowired
         private final InvoiceRepository invoiceRepository;
+
+        @Autowired
+        private ProductRepository productRepository;
+
+        @Autowired
+        private InvoiceProductRepository invoiceProductRepository;
+
 
         @Autowired
         public InvoiceService(InvoiceRepository invoiceRepository) {
@@ -38,9 +50,31 @@ public class InvoiceService {
             return invoiceRepository.findById(id);
         }
 
-        public Invoice addInvoice(Invoice invoice) {
-            return invoiceRepository.save(invoice);
-        }
+//        public Invoice addInvoice(Invoice invoice) {
+//            return invoiceRepository.save(invoice);
+//        }
+
+    @Transactional
+    public Invoice addInvoice(Invoice invoice, List<InvoiceProduct> invoiceProducts) {
+        invoiceProducts.forEach(invoiceProduct -> {
+            Product product = productRepository.findById(invoiceProduct.getProduct().getId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            invoiceProduct.setProduct(product);
+            invoice.addInvoiceProduct(invoiceProduct);
+        });
+        return invoiceRepository.save(invoice);
+    }
+
+//    public Invoice addInvoice(Invoice invoice, List<InvoiceProduct> invoiceProducts) {
+//        Invoice savedInvoice = invoiceRepository.save(invoice);
+//        for (InvoiceProduct invoiceProduct : invoiceProducts) {
+//            invoiceProduct.setInvoice(savedInvoice);
+//            invoiceProductRepository.save(invoiceProduct);
+//        }
+//        return savedInvoice;
+//    }
+
+
 
         public Invoice updateInvoice(Long id, Invoice updatedInvoice) {
             if (!invoiceRepository.existsById(id)) {

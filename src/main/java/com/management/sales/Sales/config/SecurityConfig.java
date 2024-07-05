@@ -8,12 +8,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -39,8 +41,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.util.AntPathMatcher;
 
+
+
 @Configuration
-public class SecurityConfig {
+public class SecurityConfig{
 
 
     @Bean
@@ -97,6 +101,35 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+
+    @Bean
+    public AuthenticationManager authenticationManager(ObjectPostProcessor<Object> objectPostProcessor) throws Exception {
+        return authenticationManagerBuilder(objectPostProcessor).build();
+    }
+
+    @Bean
+    public UserDetailsManager userDetailsManager() {
+        return new InMemoryUserDetailsManager();
+    }
+
+    private AuthenticationManagerBuilder authenticationManagerBuilder(ObjectPostProcessor<Object> objectPostProcessor) throws Exception {
+        AuthenticationManagerBuilder builder = new AuthenticationManagerBuilder(objectPostProcessor);
+        builder
+                .userDetailsService(userDetailsService())
+                .passwordEncoder(passwordEncoder());
+
+        return builder;
+
+    }
+
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth
+//                .inMemoryAuthentication()
+//                .withUser("user").password(passwordEncoder().encode("password")).roles("USER");
+//    }
+
+
 }
 
 

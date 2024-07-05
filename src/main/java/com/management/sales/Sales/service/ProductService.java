@@ -25,7 +25,7 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Optional<Product> getProductById(Integer id) {
+    public Optional<Product> getProductById(Long id) {
         return productRepository.findById(id);
     }
 
@@ -40,11 +40,22 @@ public class ProductService {
     }
 
     public Product updateProduct(Long id, Product product) {
-        Product existingProduct = productRepository.findById(Math.toIntExact(id)).orElse(null);
-        existingProduct.setName(product.getName());
-        existingProduct.setPrice(product.getPrice());
-        return productRepository.save(existingProduct);
+        Product existingProduct = productRepository.findById(id).orElse(null);
+        if (existingProduct != null) {
+            existingProduct.setName(product.getName());
+            existingProduct.setPrice(product.getPrice());
+            return productRepository.save(existingProduct);
+        }
+        throw new RuntimeException("Product with ID " + id + " not found!");
     }
+
+
+//    public Product updateProduct(Long id, Product product) {
+//        Product existingProduct = productRepository.findById(Math.toIntExact(id)).orElse(null);
+//        existingProduct.setName(product.getName());
+//        existingProduct.setPrice(product.getPrice());
+//        return productRepository.save(existingProduct);
+//    }
 
 
 }

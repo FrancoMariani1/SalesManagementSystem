@@ -2,7 +2,9 @@ package com.management.sales.Sales.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "products")
@@ -32,8 +34,11 @@ public class Product {
 
     }
 
-    @ManyToMany(mappedBy = "products")
-    private List<Invoice> invoices;
+//    @ManyToMany(mappedBy = "products")
+//    private List<Invoice> invoices;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<InvoiceProduct> invoiceProducts = new HashSet<>();
 
     public Long getId() { return id; }
     public String getName() {
@@ -50,8 +55,6 @@ public class Product {
         return price;
     }
 
-
-
     public void setName(String name) {
         this.name = name;
     }
@@ -66,7 +69,19 @@ public class Product {
         this.price = price;
     }
 
+    public Set<InvoiceProduct> getInvoiceProducts() {
+        return invoiceProducts;
+    }
 
+    public void addInvoiceProduct(InvoiceProduct invoiceProduct) {
+        this.invoiceProducts.add(invoiceProduct);
+        invoiceProduct.setProduct(this);
+    }
+
+    public void removeInvoiceProduct(InvoiceProduct invoiceProduct) {
+        this.invoiceProducts.remove(invoiceProduct);
+        invoiceProduct.setProduct(null);
+    }
 
     @Override
     public String toString() {
