@@ -19,11 +19,14 @@ public class AppUser implements UserDetails {
     private String name;
     private String email;
     private String password;
-    private String role;
+
+    @Enumerated(EnumType.STRING)
+    private AppUserRole role;
+//    private String role;
 
     public AppUser() {
     }
-    public AppUser( String name, String email, String password, String role) {
+    public AppUser( String name, String email, String password, AppUserRole role) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -43,7 +46,7 @@ public class AppUser implements UserDetails {
     public String getPassword() {
         return password;
     }
-    public String getRole() {
+    public AppUserRole getRole() {
         return role;
     }
 
@@ -56,7 +59,7 @@ public class AppUser implements UserDetails {
     public void setPassword(String password) {
         this.password = password;
     }
-    public void setRole(String role) {
+    public void setRole(AppUserRole role) {
         this.role = role;
     }
 
@@ -67,7 +70,7 @@ public class AppUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(role));
+        return Collections.singletonList(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
