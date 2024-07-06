@@ -1,5 +1,7 @@
 package com.management.sales.Sales.controller;
 
+import com.management.sales.Sales.dto.AppUserCreationDto;
+import com.management.sales.Sales.dto.UpdateAppUserDto;
 import com.management.sales.Sales.model.AppUser;
 import com.management.sales.Sales.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,24 +27,44 @@ public class AppUserController {
     }
 
     @GetMapping("/{id}")
-    public AppUser getUserById(@PathVariable Integer id) {
+    public AppUser getUserById(@PathVariable Long id) {
         return appUserService.getUserById(id).orElse(null);
     }
 
     @PostMapping
-    public AppUser addUser(@RequestBody AppUser appUser) {
+    public AppUser addUser(@RequestBody AppUserCreationDto appUserCreationDto) {
+        AppUser appUser = new AppUser();
+        appUser.setName(appUserCreationDto.getName());
+        appUser.setEmail(appUserCreationDto.getEmail());
+        appUser.setPassword(appUserCreationDto.getPassword());
+        appUser.setRole(appUserCreationDto.getRole());
         return appUserService.addUser(appUser);
     }
 
+//    @PostMapping
+//    public AppUser addUser(@RequestBody AppUser appUser) {
+//        return appUserService.addUser(appUser);
+//    }
+
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Integer id) {
+    public void deleteUser(@PathVariable Long id) {
         appUserService.deleteUser(id);
     }
 
     @PutMapping("/{id}")
-    public AppUser updateUser(@PathVariable Integer id, @RequestBody AppUser appUser) {
-        return appUserService.updateUser(id, appUser);
+    public AppUser updateUser(@PathVariable Long id, @RequestBody UpdateAppUserDto updateAppUserDto) {
+        AppUser existingUser = appUserService.getUserById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        existingUser.setName(updateAppUserDto.getName());
+        existingUser.setEmail(updateAppUserDto.getEmail());
+        existingUser.setPassword(updateAppUserDto.getPassword());
+        existingUser.setRole(updateAppUserDto.getRole());
+        return appUserService.updateUser(id, existingUser);
     }
+
+//    @PutMapping("/{id}")
+//    public AppUser updateUser(@PathVariable Long id, @RequestBody AppUser appUser) {
+//        return appUserService.updateUser(id, appUser);
+//    }
 
 
 }
