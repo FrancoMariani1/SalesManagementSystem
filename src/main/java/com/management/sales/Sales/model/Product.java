@@ -1,5 +1,6 @@
 package com.management.sales.Sales.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -14,9 +15,7 @@ public class Product {
     @SequenceGenerator(name = "product_sequence", sequenceName = "product_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_sequence")
     private Long id;
-
     private String name;
-
     private String category;
     private String brand;
     private double price;
@@ -27,7 +26,6 @@ public class Product {
 
     public Product(String name, String category, String brand, double price) {
         this.name = name;
-
         this.category = category;
         this.brand = brand;
         this.price = price;
@@ -37,8 +35,9 @@ public class Product {
 //    @ManyToMany(mappedBy = "products")
 //    private List<Invoice> invoices;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<InvoiceProduct> invoiceProducts = new HashSet<>();
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JsonManagedReference
+//    private Set<InvoiceProduct> invoiceProducts = new HashSet<>();
 
     public Long getId() { return id; }
     public String getName() {
@@ -69,19 +68,19 @@ public class Product {
         this.price = price;
     }
 
-    public Set<InvoiceProduct> getInvoiceProducts() {
-        return invoiceProducts;
-    }
+//    public Set<InvoiceProduct> getInvoiceProducts() {
+//        return invoiceProducts;
+//    }
 
-    public void addInvoiceProduct(InvoiceProduct invoiceProduct) {
-        this.invoiceProducts.add(invoiceProduct);
-        invoiceProduct.setProduct(this);
-    }
-
-    public void removeInvoiceProduct(InvoiceProduct invoiceProduct) {
-        this.invoiceProducts.remove(invoiceProduct);
-        invoiceProduct.setProduct(null);
-    }
+//    public void addInvoiceProduct(InvoiceProduct invoiceProduct) {
+//        this.invoiceProducts.add(invoiceProduct);
+//        invoiceProduct.setProduct(this);
+//    }
+//
+//    public void removeInvoiceProduct(InvoiceProduct invoiceProduct) {
+//        this.invoiceProducts.remove(invoiceProduct);
+//        invoiceProduct.setProduct(null);
+//    }
 
     @Override
     public String toString() {

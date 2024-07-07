@@ -50,10 +50,6 @@ public class InvoiceService {
             return invoiceRepository.findById(id);
         }
 
-//        public Invoice addInvoice(Invoice invoice) {
-//            return invoiceRepository.save(invoice);
-//        }
-
     @Transactional
     public Invoice addInvoice(Invoice invoice, List<InvoiceProduct> invoiceProducts) {
         invoiceProducts.forEach(invoiceProduct -> {
@@ -62,19 +58,14 @@ public class InvoiceService {
             invoiceProduct.setProduct(product);
             invoice.addInvoiceProduct(invoiceProduct);
         });
+
+        double totalPrice = invoiceProducts.stream()
+                .mapToDouble(ip -> ip.getQuantity() * ip.getPrice())
+                .sum();
+        invoice.setTotalPrice(totalPrice);
+
         return invoiceRepository.save(invoice);
     }
-
-//    public Invoice addInvoice(Invoice invoice, List<InvoiceProduct> invoiceProducts) {
-//        Invoice savedInvoice = invoiceRepository.save(invoice);
-//        for (InvoiceProduct invoiceProduct : invoiceProducts) {
-//            invoiceProduct.setInvoice(savedInvoice);
-//            invoiceProductRepository.save(invoiceProduct);
-//        }
-//        return savedInvoice;
-//    }
-
-
 
         public Invoice updateInvoice(Long id, Invoice updatedInvoice) {
             if (!invoiceRepository.existsById(id)) {

@@ -28,6 +28,10 @@ public class CustomerService {
         return customerRepository.findById(id);
     }
 
+//    public Optional<Customer> getCustomerByName(String name) {
+//        return customerRepository.findByName(name);
+//    }
+
     public Customer addCustomer(Customer customer) {
         return customerRepository.save(customer);
     }
