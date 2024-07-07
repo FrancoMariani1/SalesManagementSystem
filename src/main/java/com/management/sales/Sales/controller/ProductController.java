@@ -1,5 +1,6 @@
 package com.management.sales.Sales.controller;
 
+import com.management.sales.Sales.dto.ProductDto;
 import com.management.sales.Sales.model.Product;
 import com.management.sales.Sales.repository.impl.ProductRepository;
 import com.management.sales.Sales.service.ProductService;
@@ -31,7 +32,12 @@ public class ProductController {
     }
 
     @PostMapping
-    public Product addProduct(@RequestBody Product product) {
+    public Product addProduct(@RequestBody ProductDto productDto) {
+        Product product = new Product();
+        product.setName(productDto.getName());
+        product.setCategory(productDto.getCategory());
+        product.setBrand(productDto.getBrand());
+        product.setPrice(productDto.getPrice());
         return productService.addProduct(product);
     }
 
@@ -41,9 +47,15 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        return productService.updateProduct(Long.valueOf(id), product);
+    public Product updateProduct(@PathVariable Long id, @RequestBody ProductDto productDto) {
+        Product existingProduct = productService.getProductById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        existingProduct.setName(productDto.getName());
+        existingProduct.setCategory(productDto.getCategory());
+        existingProduct.setBrand(productDto.getBrand());
+        existingProduct.setPrice(productDto.getPrice());
+        return productService.updateProduct(id, existingProduct);
     }
+}
 
 //    private final ProductRepository productRepository;
 //
@@ -80,4 +92,4 @@ public class ProductController {
 //        existingProduct.setPrice(product.getPrice());
 //        return productRepository.save(existingProduct);
 //    }
-}
+

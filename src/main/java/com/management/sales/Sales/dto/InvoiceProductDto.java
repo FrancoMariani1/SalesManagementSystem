@@ -3,17 +3,17 @@ package com.management.sales.Sales.dto;
 import com.management.sales.Sales.model.Product;
 
 public class InvoiceProductDto {
-    private Product product;
+    private Long productId;
     private int quantity;
     private double price;
 
     // Getters y setters
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
     public int getQuantity() {
@@ -31,5 +31,7 @@ public class InvoiceProductDto {
     public void setPrice(double price) {
         this.price = price;
     }
+
+
 }
 

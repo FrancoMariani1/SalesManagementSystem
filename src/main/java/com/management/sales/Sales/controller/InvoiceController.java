@@ -1,9 +1,13 @@
 package com.management.sales.Sales.controller;
 
 import com.management.sales.Sales.dto.InvoiceDto;
+import com.management.sales.Sales.dto.InvoiceProductDto;
+import com.management.sales.Sales.model.Customer;
 import com.management.sales.Sales.model.Invoice;
 import com.management.sales.Sales.model.InvoiceProduct;
+import com.management.sales.Sales.service.CustomerService;
 import com.management.sales.Sales.service.InvoiceService;
+import com.management.sales.Sales.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -20,69 +24,121 @@ import java.util.stream.Collectors;
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
+    private final CustomerService customerService;
+    private final ProductService productService;
 
     @Autowired
-    public InvoiceController(InvoiceService invoiceService) {
+    public InvoiceController(InvoiceService invoiceService, CustomerService customerService, ProductService productService) {
         this.invoiceService = invoiceService;
+        this.customerService = customerService;
+        this.productService = productService;
+
     }
 
     @GetMapping
-    public List<Invoice> getAllInvoices() {
-        return invoiceService.getAllInvoices();
+    public List<InvoiceDto> getAllInvoices() {
+        return invoiceService.getAllInvoices().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Invoice> getInvoiceById(@PathVariable Long id) {
+    public ResponseEntity<InvoiceDto> getInvoiceById(@PathVariable Long id) {
         return invoiceService.getInvoiceById(id)
-                .map(invoice -> ResponseEntity.ok(invoice))
+                .map(invoice -> ResponseEntity.ok(convertToDto(invoice)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/customer/{id}")
-    public List<Invoice> getInvoiceByCustomerId(@PathVariable Long id) {
-        return invoiceService.getInvoiceByCustomerId(id);
+    public List<InvoiceDto> getInvoiceByCustomerId(@PathVariable Long id) {
+        return invoiceService.getInvoiceByCustomerId(id).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/date/{date}")
-    public List<Invoice> getInvoiceByDate(@PathVariable @DateTimeFormat(pattern= "yyyy-MM-dd") Date date) {
-        return invoiceService.getInvoiceByDate(date);
+    public List<InvoiceDto> getInvoiceByDate(@PathVariable @DateTimeFormat(pattern= "yyyy-MM-dd") Date date) {
+        return invoiceService.getInvoiceByDate(date).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     @PostMapping
-    public ResponseEntity<Invoice> addInvoice(@RequestBody InvoiceDto invoiceDto) {
+    public ResponseEntity<InvoiceDto> addInvoice(@RequestBody InvoiceDto invoiceDto) {
         Invoice invoice = new Invoice();
-        invoice.setCustomer(invoiceDto.getCustomer());
+        Customer customer = customerService.getCustomerById(invoiceDto.getCustomerId()).orElse(null);
+        if (customer == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        invoice.setCustomer(customer);
         invoice.setDate(invoiceDto.getDate());
-        invoice.setTotalPrice(invoiceDto.getTotal_price());
+//        invoice.setTotalPrice(invoiceDto.getTotalPrice());
 
         List<InvoiceProduct> invoiceProducts = invoiceDto.getInvoiceProducts().stream()
-                .map(dto -> {
-                    InvoiceProduct invoiceProduct = new InvoiceProduct();
-                    invoiceProduct.setProduct(dto.getProduct());
-                    invoiceProduct.setQuantity(dto.getQuantity());
-                    invoiceProduct.setPrice(dto.getPrice());
-                    return invoiceProduct;
-                }).collect(Collectors.toList());
+                .map(this::convertToEntity)
+                .collect(Collectors.toList());
+
+//        double totalPrice = invoiceProducts.stream()
+//                .mapToDouble(ip -> ip.getQuantity() * ip.getPrice())
+//                .sum();
+//        invoice.setTotalPrice(totalPrice);
 
         Invoice createdInvoice = invoiceService.addInvoice(invoice, invoiceProducts);
-        return new ResponseEntity<>(createdInvoice, HttpStatus.CREATED);
+        return new ResponseEntity<>(convertToDto(createdInvoice), HttpStatus.CREATED);
     }
 
-//    @PostMapping
-//    public ResponseEntity<Invoice> addInvoice(@RequestBody Invoice invoice) {
-//        Invoice createdInvoice = invoiceService.addInvoice(invoice);
-//        return new ResponseEntity<>(createdInvoice, HttpStatus.CREATED);
-//    }
-
     @PutMapping("/{id}")
-    public ResponseEntity<Invoice> updateInvoice(@RequestBody Invoice invoice, @PathVariable Long id) {
-        return ResponseEntity.ok(invoiceService.updateInvoice(id, invoice));
+    public ResponseEntity<InvoiceDto> updateInvoice(@RequestBody InvoiceDto invoiceDto, @PathVariable Long id) {
+        Invoice invoice = convertToEntity(invoiceDto);
+        List<InvoiceProduct> invoiceProducts = invoiceDto.getInvoiceProducts().stream()
+                .map(this::convertToEntity)
+                .collect(Collectors.toList());
+        Invoice updatedInvoice = invoiceService.updateInvoice(id, invoice);
+        return ResponseEntity.ok(convertToDto(updatedInvoice));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteInvoice(@PathVariable Long id) {
         invoiceService.deleteInvoice(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private InvoiceDto convertToDto(Invoice invoice) {
+        InvoiceDto invoiceDto = new InvoiceDto();
+        invoiceDto.setCustomerId(invoice.getCustomer().getId());
+        invoiceDto.setDate(invoice.getDate());
+        invoiceDto.setTotalPrice(invoice.getTotalPrice());
+        invoiceDto.setInvoiceProducts(invoice.getInvoiceProducts().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toSet()));
+        return invoiceDto;
+    }
+
+    private InvoiceProductDto convertToDto(InvoiceProduct invoiceProduct) {
+        InvoiceProductDto invoiceProductDto = new InvoiceProductDto();
+        invoiceProductDto.setProductId(invoiceProduct.getProduct().getId());
+        invoiceProductDto.setQuantity(invoiceProduct.getQuantity());
+        invoiceProductDto.setPrice(invoiceProduct.getPrice());
+        return invoiceProductDto;
+    }
+
+    private Invoice convertToEntity(InvoiceDto invoiceDto) {
+        Invoice invoice = new Invoice();
+        // Asumiendo que tienes un método en el servicio para obtener el cliente
+        Customer customer = customerService.getCustomerById(invoiceDto.getCustomerId()).orElse(null);
+        invoice.setCustomer(customer);
+        invoice.setDate(invoiceDto.getDate());
+        invoice.setTotalPrice(invoiceDto.getTotalPrice());
+        return invoice;
+    }
+
+    private InvoiceProduct convertToEntity(InvoiceProductDto invoiceProductDto) {
+        InvoiceProduct invoiceProduct = new InvoiceProduct();
+//        Product product = productService.getProductById(invoiceProductDto.getProductId()).orElse(null);
+        invoiceProduct.setProduct(productService.getProductById(invoiceProductDto.getProductId()).orElse(null));
+        invoiceProduct.setQuantity(invoiceProductDto.getQuantity());
+        invoiceProduct.setPrice(invoiceProductDto.getPrice());
+        return invoiceProduct;
     }
 
 

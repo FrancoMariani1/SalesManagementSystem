@@ -2,6 +2,7 @@
 
 package com.management.sales.Sales.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -21,42 +22,16 @@ public class Invoice {
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private Customer customer;
 
-//    @ManyToOne
-//    @JoinColumn(name = "product_id", referencedColumnName = "id")
-//    private Product product;
-//    private int quantity;
-//    private double price;
-//    private double total_price;
     private Date date;
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<InvoiceProduct> invoiceProducts = new HashSet<>();
 
     private double totalPrice;
 
     public Invoice() {
     }
-
-
-//    public Invoice(Customer customer, Product product, int quantity, double price, double total_price,
-//            Date date) {
-//
-//        this.customer = customer;
-//        this.product = product;
-//        this.quantity = quantity;
-//        this.price = price;
-//        this.total_price = total_price;
-//        this.date = date;
-//    }
-
-//    @ManyToMany
-//    @JoinTable(
-//            name = "invoice_product",
-//            joinColumns = @JoinColumn(name = "invoice_id"),
-//            inverseJoinColumns = @JoinColumn(name = "product_id")
-//    )
-//
-//    private List<Product> products;
 
     public Long getId() {
         return id;
@@ -66,18 +41,6 @@ public class Invoice {
         return customer;
     }
 
-//    public Product getProduct() {
-//        return product;
-//    }
-//
-//    public int getQuantity() {
-//        return quantity;
-//    }
-//
-//    public double getPrice() {
-//        return price;
-//    }
-//
     public double getTotalPrice() {
         return totalPrice;
     }
@@ -86,37 +49,13 @@ public class Invoice {
         return date;
     }
 
-//    public List<Product> getProducts() {
-//        return products;
-//    }
-
     public void setId(Long id) {
         this.id = id;
     }
 
-//    public void setProducts(List<Product> products) {
-//        this.products = products;
-//    }
-
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
-
-//    public void setProduct(Product product) {
-//        this.product = product;
-//    }
-
-//    public void setQuantity(int quantity) {
-//        this.quantity = quantity;
-//    }
-
-//    public void setPrice(double price) {
-//        this.price = price;
-//    }
-//
-//    public void setTotal_price(double total_price) {
-//        this.total_price = total_price;
-//    }
 
     public void setDate(Date date) {
         this.date = date;
@@ -124,6 +63,10 @@ public class Invoice {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public void setInvoiceProducts(Set<InvoiceProduct> invoiceProducts) {
+        this.invoiceProducts = invoiceProducts;
     }
 
     public Set<InvoiceProduct> getInvoiceProducts() {
@@ -146,11 +89,7 @@ public class Invoice {
     }
 }
 
-//    @Override
-//    public String toString() {
-//        return "Invoice [id=" + id + ", date=" + date + ", id=" + id + ", price=" + price
-//                + ", quantity=" + quantity + ", total_price=" + total_price + "]";
-//    }
+
 
 
 

@@ -1,31 +1,33 @@
 package com.management.sales.Sales.dto;
 
-import com.management.sales.Sales.model.Customer;
-
+import com.management.sales.Sales.model.InvoiceProduct;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 public class InvoiceDto {
-    private Customer customer;
-    private double total_price;
+//    private Long id;
+    private Long customerId;
+
     private Date date;
-    private List<InvoiceProductDto> invoiceProducts;
+    private double totalPrice;
+    private Set<InvoiceProductDto> invoiceProducts;
 
     // Getters y setters
-    public Customer getCustomer() {
-        return customer;
+
+//    public Long getId() {
+//        return id;
+//    }
+
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+
+    public Long getCustomerId() {
+        return customerId;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public double getTotal_price() {
-        return total_price;
-    }
-
-    public void setTotal_price(double total_price) {
-        this.total_price = total_price;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     public Date getDate() {
@@ -36,11 +38,19 @@ public class InvoiceDto {
         this.date = date;
     }
 
-    public List<InvoiceProductDto> getInvoiceProducts() {
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public Set<InvoiceProductDto> getInvoiceProducts() {
         return invoiceProducts;
     }
 
-    public void setInvoiceProducts(List<InvoiceProductDto> invoiceProducts) {
+    public void setInvoiceProducts(Set<InvoiceProductDto> invoiceProducts) {
         this.invoiceProducts = invoiceProducts;
     }
 }
