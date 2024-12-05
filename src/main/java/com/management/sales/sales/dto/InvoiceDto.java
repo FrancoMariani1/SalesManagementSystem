@@ -4,22 +4,20 @@ import java.util.Date;
 import java.util.Set;
 
 public class InvoiceDto {
-//    private Long id;
+    private Long id;
     private Long customerId;
 
     private Date date;
     private double totalPrice;
     private Set<InvoiceProductDto> invoiceProducts;
 
-    // Getters y setters
+    public Long getId() {
+        return id;
+    }
 
-//    public Long getId() {
-//        return id;
-//    }
-
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getCustomerId() {
         return customerId;
