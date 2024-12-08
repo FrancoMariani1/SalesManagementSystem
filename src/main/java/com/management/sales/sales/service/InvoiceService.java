@@ -67,15 +67,48 @@ public class InvoiceService {
         return invoiceRepository.save(invoice);
     }
 
-        public Invoice updateInvoice(Long id, Invoice updatedInvoice) {
-            if (!invoiceRepository.existsById(id)) {
-                throw new RuntimeException("Invoice with ID " + id + " not found!");
-            }
+    @Transactional
+    public Invoice updateInvoice(Long id, Invoice updatedInvoice, List<InvoiceProduct> updatedInvoiceProducts) {
+        Invoice existingInvoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Invoice with ID " + id + " not found!"));
 
-            updatedInvoice.setId(id);
+        // Actualiza las propiedades básicas de la factura
+        existingInvoice.setCustomer(updatedInvoice.getCustomer());
+        existingInvoice.setDate(updatedInvoice.getDate());
+        existingInvoice.setTotalPrice(updatedInvoice.getTotalPrice());
 
-            return invoiceRepository.save(updatedInvoice);
-        }
+        // Elimina los productos antiguos
+        existingInvoice.getInvoiceProducts().clear();
+        invoiceProductRepository.deleteAllByInvoiceId(id);
+
+        // Agrega los productos nuevos
+        updatedInvoiceProducts.forEach(invoiceProduct -> {
+            Product product = productRepository.findById(invoiceProduct.getProduct().getId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            invoiceProduct.setInvoice(existingInvoice);
+            invoiceProduct.setProduct(product);
+            existingInvoice.addInvoiceProduct(invoiceProduct);
+        });
+
+        // Recalcula el totalPrice
+        double totalPrice = updatedInvoiceProducts.stream()
+                .mapToDouble(ip -> ip.getQuantity() * ip.getPrice())
+                .sum();
+        existingInvoice.setTotalPrice(totalPrice);
+
+        return invoiceRepository.save(existingInvoice);
+    }
+
+
+//        public Invoice updateInvoice(Long id, Invoice updatedInvoice) {
+//            if (!invoiceRepository.existsById(id)) {
+//                throw new RuntimeException("Invoice with ID " + id + " not found!");
+//            }
+//
+//            updatedInvoice.setId(id);
+//
+//            return invoiceRepository.save(updatedInvoice);
+//        }
 
         @Transactional
 
