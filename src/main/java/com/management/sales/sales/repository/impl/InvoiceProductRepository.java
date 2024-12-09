@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface InvoiceProductRepository extends JpaRepository<InvoiceProduct, Long> {
 
+    void deleteAllByInvoiceId(Long id);
+
 }

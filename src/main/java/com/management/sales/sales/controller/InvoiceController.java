@@ -93,9 +93,19 @@ public class InvoiceController {
         List<InvoiceProduct> invoiceProducts = invoiceDto.getInvoiceProducts().stream()
                 .map(this::convertToEntity)
                 .collect(Collectors.toList());
-        Invoice updatedInvoice = invoiceService.updateInvoice(id, invoice);
+        Invoice updatedInvoice = invoiceService.updateInvoice(id, invoice, invoiceProducts);
         return ResponseEntity.ok(convertToDto(updatedInvoice));
     }
+
+//    @PutMapping("/{id}")
+//    public ResponseEntity<InvoiceDto> updateInvoice(@RequestBody InvoiceDto invoiceDto, @PathVariable Long id) {
+//        Invoice invoice = convertToEntity(invoiceDto);
+//        List<InvoiceProduct> invoiceProducts = invoiceDto.getInvoiceProducts().stream()
+//                .map(this::convertToEntity)
+//                .collect(Collectors.toList());
+//        Invoice updatedInvoice = invoiceService.updateInvoice(id, invoice);
+//        return ResponseEntity.ok(convertToDto(updatedInvoice));
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteInvoice(@PathVariable Long id) {
@@ -105,6 +115,7 @@ public class InvoiceController {
 
     private InvoiceDto convertToDto(Invoice invoice) {
         InvoiceDto invoiceDto = new InvoiceDto();
+        invoiceDto.setId(invoice.getId()); // Asigna el ID de la entidad
         invoiceDto.setCustomerId(invoice.getCustomer().getId());
         invoiceDto.setDate(invoice.getDate());
         invoiceDto.setTotalPrice(invoice.getTotalPrice());
