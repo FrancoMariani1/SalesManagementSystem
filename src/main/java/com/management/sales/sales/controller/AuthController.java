@@ -4,7 +4,7 @@ import com.management.sales.sales.dto.AuthenticationResponse;
 import com.management.sales.sales.dto.LoginRequest;
 import com.management.sales.sales.service.AuthService;
 import com.management.sales.sales.service.AppUserService;
-import com.management.sales.sales.util.JwtUtil;
+import com.management.sales.sales.security.JwtUtilService;
 import com.management.sales.sales.dto.RegisterUserDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +26,14 @@ public class AuthController {
     private final AuthService authService;
     private final AuthenticationManager authenticationManager;
     private final AppUserService appUserService;
-    private final JwtUtil jwtUtil;
+    private final JwtUtilService jwtUtilService;
 
     @Autowired
-    public AuthController(AuthService authService, AuthenticationManager authenticationManager, AppUserService appUserService, JwtUtil jwtUtil) {
+    public AuthController(AuthService authService, AuthenticationManager authenticationManager, AppUserService appUserService, JwtUtilService jwtUtilService) {
         this.authService = authService;
         this.authenticationManager = authenticationManager;
         this.appUserService = appUserService;
-        this.jwtUtil = jwtUtil;
+        this.jwtUtilService = jwtUtilService;
     }
 
 //    @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -52,7 +52,7 @@ public class AuthController {
         final UserDetails userDetails = appUserService
                 .loadUserByUsername(loginRequest.getEmail());
 
-        final String jwt = jwtUtil.generateToken(userDetails);
+        final String jwt = jwtUtilService.generateToken(userDetails);
 
         // Convertir roles a una lista de strings
         final List<String> roles = userDetails.getAuthorities()

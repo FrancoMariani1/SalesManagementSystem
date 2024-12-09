@@ -5,6 +5,7 @@ import com.management.sales.sales.dto.RegisterUserDto;
 import com.management.sales.sales.model.AppUser;
 import com.management.sales.sales.model.AppUserRole;
 import com.management.sales.sales.repository.impl.AppUserRepository;
+import com.management.sales.sales.security.JwtUtilService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -12,7 +13,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.management.sales.sales.util.JwtUtil;
+import com.management.sales.sales.security.JwtUtilService;
 
 import java.util.Collections;
 
@@ -21,13 +22,13 @@ public class AuthService {
 
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
+    private final JwtUtilService jwtUtilService;
 
     @Autowired
-    public AuthService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public AuthService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder, JwtUtilService jwtUtil) {
         this.appUserRepository = appUserRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
+        this.jwtUtilService = jwtUtil;
     }
 
     public UserDetails loadUserByEmail(String email) {
@@ -49,7 +50,7 @@ public class AuthService {
         }
 
         UserDetails userDetails = new User(user.getEmail(), user.getPassword(), Collections.singletonList(user.getRole().toGrantedAuthority()));
-        return jwtUtil.generateToken(userDetails);
+        return jwtUtilService.generateToken(userDetails);
     }
 
     public void registerUser(RegisterUserDto registerUserDto) {
