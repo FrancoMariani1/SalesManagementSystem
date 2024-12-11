@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +38,10 @@ public class AppUserService implements UserDetailsService {
 
         System.out.println("User found with email: " + email);
 
-        return new User(appUser.getEmail(), appUser.getPassword(), new ArrayList<>());
+        return new User(
+                appUser.getEmail(),
+                appUser.getPassword(),
+                Collections.singletonList(appUser.getRole().toGrantedAuthority()));
     }
 
 
