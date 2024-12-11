@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -40,15 +41,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             // Si el token es válido, extrae el nombre de usuario y autentica el usuario
             if (token != null && jwtUtilService.validateToken(token)) {
                 String email = jwtUtilService.extractUsername(token);
+                String extractedRole = jwtUtilService.getRole(token);
+
+                final String role = extractedRole.startsWith("ROLE_") ? extractedRole : "ROLE_" + extractedRole;
 
                 // Carga los detalles del usuario a partir del nombre de usuario extraído del token
                 UserDetails userDetails = userService.loadUserByUsername(email);
 
                 if (userDetails != null) {
-                    // Crea la autenticación con el UserDetails completo
+                    // Crea la autenticación con el rol ajustado
                     UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    Collections.singletonList(() -> role)
+                            );
                     // Establece la autenticación en el contexto de seguridad
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }

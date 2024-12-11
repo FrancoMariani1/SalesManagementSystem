@@ -38,7 +38,7 @@ public class SecurityConfig {
                 )
                 .authorizeRequests(authorizeRequests -> {
                     authorizeRequests
-//                            .requestMatchers(new AntPathRequestMatcher("/users/**", "GET")).permitAll()
+                            .requestMatchers(new AntPathRequestMatcher("/users/**")).hasRole("ADMIN")
 //                            .requestMatchers(new AntPathRequestMatcher("/customers/**", "GET")).permitAll()
 //                            .requestMatchers(new AntPathRequestMatcher("/products/**", "GET")).permitAll()
 //                            .requestMatchers(new AntPathRequestMatcher("/invoices/**", "GET")).permitAll()
@@ -52,11 +52,11 @@ public class SecurityConfig {
 //                            .requestMatchers(new AntPathRequestMatcher("/**", "PUT")).permitAll()
 //                            .requestMatchers(new AntPathRequestMatcher("/public/**")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/auth/login")).permitAll()
-                            .requestMatchers(new AntPathRequestMatcher("/auth/register")).permitAll()
+                            .requestMatchers(new AntPathRequestMatcher("/auth/register")).hasRole("ADMIN")
 //                            .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**", "/v3/api-docs/**")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/auth/login", "POST")).permitAll()
-                            .requestMatchers(new AntPathRequestMatcher("/auth/register", "POST")).permitAll()
+                            .requestMatchers(new AntPathRequestMatcher("/auth/register", "POST")).hasRole("ADMIN")
                             .anyRequest().authenticated();
                 })
                 .httpBasic(httpBasic -> httpBasic.disable())  // Desactiva autenticación básica

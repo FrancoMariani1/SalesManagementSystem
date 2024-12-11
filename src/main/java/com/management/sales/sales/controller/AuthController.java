@@ -6,6 +6,7 @@ import com.management.sales.sales.service.AuthService;
 import com.management.sales.sales.service.AppUserService;
 import com.management.sales.sales.security.JwtUtilService;
 import com.management.sales.sales.dto.RegisterUserDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -52,27 +54,42 @@ public class AuthController {
         final UserDetails userDetails = appUserService
                 .loadUserByUsername(loginRequest.getEmail());
 
-        final String jwt = jwtUtilService.generateToken(userDetails);
-
-        // Convertir roles a una lista de strings
-        final List<String> roles = userDetails.getAuthorities()
+        final String role = userDetails.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
-                .toList();
+                .findFirst()
+                .orElse("ROLE_USER");
+
+        final String jwt = jwtUtilService.generateToken(userDetails, role);
+
+//        // Convertir roles a una lista de strings
+//        final List<String> roles = userDetails.getAuthorities()
+//                .stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .toList();
 
         // Crear respuesta
-        AuthenticationResponse response = new AuthenticationResponse(jwt, roles, "Login successful");
+        AuthenticationResponse response = new AuthenticationResponse(jwt, Collections.singletonList(role), "Login successful");
 
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterUserDto registerUserDto) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterUserDto registerUserDto, HttpServletRequest request) {
         try {
-            authService.registerUser(registerUserDto);
+            // Extraer el email del usuario autenticado desde el token
+            String currentUserEmail = jwtUtilService.extractUsername(jwtUtilService.getToken(request));
+
+            // Llamar al servicio para registrar el usuario, pasando el email del usuario actual
+            authService.registerUser(registerUserDto, currentUserEmail);
+
             return ResponseEntity.ok("User registered successfully");
         } catch (IllegalStateException e) {
+            // Manejar errores relacionados con la lógica del registro
             return ResponseEntity.status(400).body("Registration failed: " + e.getMessage());
+        } catch (Exception e) {
+            // Manejar cualquier otro error inesperado
+            return ResponseEntity.status(500).body("An unexpected error occurred: " + e.getMessage());
         }
     }
 }

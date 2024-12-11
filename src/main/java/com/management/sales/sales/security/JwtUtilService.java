@@ -31,9 +31,12 @@ public class JwtUtilService {
     }
 
     // Genera un token JWT para un usuario específico
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, String role) {
+        String cleanRole = role.startsWith("ROLE_") ? role.substring(5) : role;
+
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .claim("role", role)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + tokenValidity))
                 .signWith(getSigningKey())
@@ -82,6 +85,11 @@ public class JwtUtilService {
             return authorizationHeader.substring(7);
         }
         return null;
+    }
+
+    public String getRole(String token) {
+        String role = extractAllClaims(token).get("role", String.class);
+        return role.startsWith("ROLE_") ? role : "ROLE_" + role;
     }
 }
 

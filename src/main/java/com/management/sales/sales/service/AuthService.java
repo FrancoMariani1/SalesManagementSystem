@@ -49,13 +49,24 @@ public class AuthService {
             throw new BadCredentialsException("Invalid password");
         }
 
-        UserDetails userDetails = new User(user.getEmail(), user.getPassword(), Collections.singletonList(user.getRole().toGrantedAuthority()));
-        return jwtUtilService.generateToken(userDetails);
+        UserDetails userDetails = new User(
+                user.getEmail(),
+                user.getPassword(),
+                Collections.singletonList(user.getRole().toGrantedAuthority()));
+
+        return jwtUtilService.generateToken(userDetails, user.getRole().name());
     }
 
-    public void registerUser(RegisterUserDto registerUserDto) {
-        String email = registerUserDto.getEmail();
+    public void registerUser(RegisterUserDto registerUserDto, String currentUserEmail) {
+        AppUser currentUser = appUserRepository.findByEmail(currentUserEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Current user not found"));
 
+        // Verifica si el usuario actual tiene rol de ADMIN
+        if (!currentUser.getRole().equals(AppUserRole.ADMIN)) {
+            throw new IllegalStateException("Only ADMIN users can register new users");
+        }
+
+        String email = registerUserDto.getEmail();
         if (appUserRepository.findByEmail(email).isPresent()) {
             throw new IllegalStateException("Email already taken");
         }
