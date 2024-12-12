@@ -2,10 +2,12 @@ package com.management.sales.sales.controller;
 
 import com.management.sales.sales.dto.AuthenticationResponse;
 import com.management.sales.sales.dto.LoginRequest;
+import com.management.sales.sales.model.AppUser;
 import com.management.sales.sales.service.AuthService;
 import com.management.sales.sales.service.AppUserService;
 import com.management.sales.sales.security.JwtUtilService;
 import com.management.sales.sales.dto.RegisterUserDto;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +19,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -54,13 +56,19 @@ public class AuthController {
         final UserDetails userDetails = appUserService
                 .loadUserByUsername(loginRequest.getEmail());
 
+        final Optional<AppUser> optionalAppUser = appUserService.getUserByEmail(loginRequest.getEmail());
+        if (!optionalAppUser.isPresent()) {
+            throw new EntityNotFoundException("User not found with email: " + loginRequest.getEmail());
+        }
+        final AppUser appUser = optionalAppUser.get();
+
         final String role = userDetails.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
                 .orElse("ROLE_USER");
 
-        final String jwt = jwtUtilService.generateToken(userDetails, role);
+        final String jwt = jwtUtilService.generateToken(userDetails, appUser.getId(), role);
 
 //        // Convertir roles a una lista de strings
 //        final List<String> roles = userDetails.getAuthorities()

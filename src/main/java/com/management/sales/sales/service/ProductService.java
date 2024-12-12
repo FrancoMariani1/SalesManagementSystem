@@ -2,6 +2,7 @@
 
 package com.management.sales.sales.service;
 
+import com.management.sales.sales.dto.ProductDto;
 import com.management.sales.sales.model.Product;
 import com.management.sales.sales.repository.impl.ProductRepository;
 import jakarta.transaction.Transactional;
@@ -29,7 +30,12 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
-    public Product addProduct(Product product) {
+    public Product addProduct(ProductDto productDto) {
+        Product product = new Product();
+        product.setName(productDto.getName());
+        product.setCategory(productDto.getCategory());
+        product.setBrand(productDto.getBrand());
+        product.setPrice(productDto.getPrice());
         return productRepository.save(product);
     }
 
@@ -39,14 +45,16 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public Product updateProduct(Long id, Product product) {
-        Product existingProduct = productRepository.findById(id).orElse(null);
-        if (existingProduct != null) {
-            existingProduct.setName(product.getName());
-            existingProduct.setPrice(product.getPrice());
-            return productRepository.save(existingProduct);
-        }
-        throw new RuntimeException("Product with ID " + id + " not found!");
+    public Product updateProduct(Long id, ProductDto productDto) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product with ID " + id + " not found!"));
+
+        existingProduct.setName(productDto.getName());
+        existingProduct.setCategory(productDto.getCategory());
+        existingProduct.setBrand(productDto.getBrand());
+        existingProduct.setPrice(productDto.getPrice());
+
+        return productRepository.save(existingProduct);
     }
 
 

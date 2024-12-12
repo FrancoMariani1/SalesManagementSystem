@@ -31,6 +31,10 @@ public class AppUserService implements UserDetailsService {
         return appUserRepository.findById(id);
     }
 
+
+    public Optional<AppUser> getUserByEmail(String email) {
+        return appUserRepository.findByEmail(email);
+    }
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         AppUser appUser = appUserRepository.findByEmail(email)
