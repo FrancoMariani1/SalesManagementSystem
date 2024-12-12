@@ -1,8 +1,13 @@
 package com.management.sales.sales.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class ProductDto {
+    @NotNull
     private String name;
+    @NotNull
     private String category;
+    @NotNull
     private String brand;
     private double price;
 

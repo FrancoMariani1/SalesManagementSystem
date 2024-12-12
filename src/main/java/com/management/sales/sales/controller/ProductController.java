@@ -32,12 +32,7 @@ public class ProductController {
 
     @PostMapping
     public Product addProduct(@RequestBody ProductDto productDto) {
-        Product product = new Product();
-        product.setName(productDto.getName());
-        product.setCategory(productDto.getCategory());
-        product.setBrand(productDto.getBrand());
-        product.setPrice(productDto.getPrice());
-        return productService.addProduct(product);
+        return productService.addProduct(productDto);
     }
 
     @DeleteMapping("/{id}")
@@ -47,12 +42,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public Product updateProduct(@PathVariable Long id, @RequestBody ProductDto productDto) {
-        Product existingProduct = productService.getProductById(id).orElseThrow(() -> new RuntimeException("Product not found"));
-        existingProduct.setName(productDto.getName());
-        existingProduct.setCategory(productDto.getCategory());
-        existingProduct.setBrand(productDto.getBrand());
-        existingProduct.setPrice(productDto.getPrice());
-        return productService.updateProduct(id, existingProduct);
+        return productService.updateProduct(id, productDto);
     }
 }
 

@@ -54,7 +54,7 @@ public class AuthService {
                 user.getPassword(),
                 Collections.singletonList(user.getRole().toGrantedAuthority()));
 
-        return jwtUtilService.generateToken(userDetails, user.getRole().name());
+        return jwtUtilService.generateToken(userDetails, user.getId(), user.getRole().name());
     }
 
     public void registerUser(RegisterUserDto registerUserDto, String currentUserEmail) {
