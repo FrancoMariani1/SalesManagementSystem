@@ -6,6 +6,7 @@ import com.management.sales.sales.model.Customer;
 import com.management.sales.sales.model.Invoice;
 import com.management.sales.sales.model.InvoiceProduct;
 import com.management.sales.sales.service.CustomerService;
+import com.management.sales.sales.service.InvoicePdfService;
 import com.management.sales.sales.service.InvoiceService;
 import com.management.sales.sales.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,11 +29,14 @@ public class InvoiceController {
     private final CustomerService customerService;
     private final ProductService productService;
 
+    private final InvoicePdfService invoicePdfService;
+
     @Autowired
-    public InvoiceController(InvoiceService invoiceService, CustomerService customerService, ProductService productService) {
+    public InvoiceController(InvoiceService invoiceService, CustomerService customerService, ProductService productService, InvoicePdfService invoicePdfService) {
         this.invoiceService = invoiceService;
         this.customerService = customerService;
         this.productService = productService;
+        this.invoicePdfService = invoicePdfService;
 
     }
 
@@ -151,6 +156,20 @@ public class InvoiceController {
         invoiceProduct.setPrice(invoiceProductDto.getPrice());
         return invoiceProduct;
     }
+
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> exportInvoiceToPdf(@PathVariable Long id) {
+        Invoice invoice = invoiceService.getInvoiceById(id)
+                .orElseThrow(() -> new RuntimeException("Invoice not found"));
+
+        ByteArrayInputStream pdfStream = invoicePdfService.generateInvoicePdf(invoice);
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=invoice_" + id + ".pdf")
+                .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
+                .body(pdfStream.readAllBytes());
+    }
+
 
 
 }
